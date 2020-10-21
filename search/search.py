@@ -130,7 +130,6 @@ def depthFirstSearch(problem):
         nextMove = toSee.pop()
         currentState= nextMove[0]
         way.push(getDirection(nextMove[1]))
-        print(problem.isGoalState(currentState), currentState)
 
     return way.list
 
