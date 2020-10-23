@@ -128,15 +128,68 @@ def depthFirstSearch(problem):
 
         backTrack.push(currentState)
         nextMove = toSee.pop()
-        currentState= nextMove[0]
+        currentState = nextMove[0]
         way.push(getDirection(nextMove[1]))
 
     return way.list
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    n, s, w, e = Directions.NORTH, Directions.SOUTH, Directions.WEST, Directions.EAST
+
+    def getDirection(d):
+        if d == "West":
+            return w
+        elif d == "East":
+            return e
+        elif d == "North":
+            return n
+        else:
+            return s
+
+    def findPath(parents, problem):
+        way = []
+        goalState = [m for m in parents.keys() if problem.isGoalState(m)][0]
+        currentState = goalState
+        while currentState != problem.getStartState():
+            way.append(findDirection(currentState, parents[currentState]))
+            currentState = parents[currentState]
+
+        way.reverse()
+        return way
+
+    def findDirection(source, tail):
+        x1, x2, y1, y2 = source[0], tail[0], source[1], tail[1]
+        if x1 == x2 + 1:
+            return e
+        elif x1 == x2 - 1:
+            return w
+        elif y1 == y2 + 1:
+            return n
+        else:
+            return s
+
+
+    parents = dict()
+    visited = set()
+    toSee = util.Queue()
+    toSee.push(problem.getStartState())
+
+    while len([m for m in toSee.list if problem.isGoalState(m)]) == 0:
+        num = len(toSee.list)
+        for i in range(num):
+            state = toSee.pop()
+            for succ in problem.getSuccessors(state):
+                if not succ[0] in visited:
+                    toSee.push(succ[0])
+                    parents[succ[0]] = state
+
+            visited.add(state)
+
+    return findPath(parents, problem)
+
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
