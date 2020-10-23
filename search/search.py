@@ -145,30 +145,22 @@ def breadthFirstSearch(problem):
             return e
         elif d == "North":
             return n
-        else:
+        elif d == "South":
             return s
+
+        else:
+            return d
 
     def findPath(parents, problem):
         way = []
         goalState = [m for m in parents.keys() if problem.isGoalState(m)][0]
         currentState = goalState
         while currentState != problem.getStartState():
-            way.append(findDirection(currentState, parents[currentState]))
-            currentState = parents[currentState]
+            way.append(getDirection(parents[currentState][1]))
+            currentState = parents[currentState][0]
 
         way.reverse()
         return way
-
-    def findDirection(source, tail):
-        x1, x2, y1, y2 = source[0], tail[0], source[1], tail[1]
-        if x1 == x2 + 1:
-            return e
-        elif x1 == x2 - 1:
-            return w
-        elif y1 == y2 + 1:
-            return n
-        else:
-            return s
 
 
     parents = dict()
@@ -183,7 +175,7 @@ def breadthFirstSearch(problem):
             for succ in problem.getSuccessors(state):
                 if not succ[0] in visited:
                     toSee.push(succ[0])
-                    parents[succ[0]] = state
+                    parents[succ[0]] = (state, succ[1])
 
             visited.add(state)
 
