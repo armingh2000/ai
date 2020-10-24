@@ -172,12 +172,14 @@ def breadthFirstSearch(problem):
         num = len(toSee.list)
         for i in range(num):
             state = toSee.pop()
-            for succ in problem.getSuccessors(state):
-                if not succ[0] in visited:
-                    toSee.push(succ[0])
-                    parents[succ[0]] = (state, succ[1])
+            if not state in visited:
+                succs = problem.getSuccessors(state)
+                for succ in succs:
+                    if not succ[0] in visited:
+                        toSee.push(succ[0])
+                        parents[succ[0]] = (state, succ[1])
 
-            visited.add(state)
+                visited.add(state)
 
     return findPath(parents, problem)
 

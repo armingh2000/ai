@@ -288,6 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.visitedCorners = 0
 
     def getStartState(self):
         """
@@ -295,14 +296,14 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, self.corners)
+        return (self.startingPosition, ())
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        if len(state[1]) == 0:
+        if len(state[1]) == 4:
             return True
         return False
 
@@ -318,9 +319,9 @@ class CornersProblem(search.SearchProblem):
         """
 
 
-        def remainingCorners(T, pos):
+        def seenCorners(T, pos):
             T = list(T)
-            T.remove(pos)
+            T.append(pos)
             return tuple(T)
 
 
@@ -331,14 +332,14 @@ class CornersProblem(search.SearchProblem):
             x,y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            if (nextx < 0) or (nexty < 0) or (nextx > self.walls.width - 1) or (nexty > self.walls.height - 1 ):
+            if (nextx < 1) or (nexty < 1) or (nextx > self.walls.width - 2) or (nexty > self.walls.height - 2 ):
                 continue
             hitsWall = self.walls[nextx][nexty]
             if hitsWall == False:
-                if (nextx, nexty) in state[1]:
+                if (nextx, nexty) in self.corners and not (nextx, nexty) in state[1]:
                     successors.append(
                         (
-                            ((nextx, nexty), remainingCorners(
+                            ((nextx, nexty), seenCorners(
                                 state[1], (nextx, nexty)
                             )),
                             action
