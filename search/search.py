@@ -233,7 +233,6 @@ def uniformCostSearch(problem):
 
     return findPath(parents, problem)
 
-    return [w]
 
 def nullHeuristic(state, problem=None):
     """
@@ -245,7 +244,57 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    n, s, w, e = Directions.NORTH, Directions.SOUTH, Directions.WEST, Directions.EAST
+
+    def getDirection(d):
+        if d == "West":
+            return w
+        elif d == "East":
+            return e
+        elif d == "North":
+            return n
+        elif d == "South":
+            return s
+
+        else:
+            return d
+
+
+    def findPath(parents, problem):
+        way = []
+        goalState = [m for m in parents.keys() if problem.isGoalState(m)][0]
+        currentState = goalState
+        while currentState != problem.getStartState():
+            way.append(getDirection(parents[currentState][1]))
+            currentState = parents[currentState][0]
+
+        way.reverse()
+        return way
+
+    def localHeuristic(position):
+        return heuristic(position, problem)
+
+
+    parents = dict()
+    visited = set()
+    toSee = util.PriorityQueueWithFunction(localHeuristic)
+    toSee.push(problem.getStartState())
+
+    while True:
+        state = toSee.pop()
+        if problem.isGoalState(state):
+            break
+        for succ in problem.getSuccessors(state):
+            if not succ[0] in visited:
+                toSee.push(succ[0])
+                parents[succ[0]] = (state, succ[1])
+
+            visited.add(state)
+
+    return findPath(parents, problem)
+
+
 
 
 # Abbreviations
