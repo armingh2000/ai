@@ -541,8 +541,27 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        return ["west"]
+        fringe = util.Queue()
+        visited = set()
+        currentState = problem.getStartState()
+        fringe.push((currentState, []))
 
+        while not fringe.isEmpty():
+            currentState, path = fringe.pop()
+
+            if problem.isGoalState(currentState):
+                return path
+
+            if currentState in visited:
+                continue
+
+            for succ in problem.getSuccessors(currentState):
+                if not succ[0] in visited:
+                    fringe.push((succ[0], path + [succ[1]]))
+
+            visited.add(currentState)
+
+        return []
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
     A search problem for finding a path to any food.
@@ -577,7 +596,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[state[0]][state[1]]
 
 def mazeDistance(point1, point2, gameState):
     """
