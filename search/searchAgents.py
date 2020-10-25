@@ -342,14 +342,14 @@ class CornersProblem(search.SearchProblem):
                             ((nextx, nexty), seenCorners(
                                 state[1], (nextx, nexty)
                             )),
-                            action
+                            action, 1
                         )
                     )
                 else:
                     successors.append(
                         (
                             ((nextx, nexty), state[1]),
-                            action
+                            action, 1
                         )
                     )
 
