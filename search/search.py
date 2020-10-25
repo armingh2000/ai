@@ -87,51 +87,27 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    from game import Directions
-    import random
-    n, s, w, e = Directions.NORTH, Directions.SOUTH, Directions.WEST, Directions.EAST
-
-    def getDirection(d):
-        if d == "West":
-            return w
-        elif d == "East":
-            return e
-        elif d == "North":
-            return n
-        else:
-            return s
-
-
-    backTrack = util.Stack()
-    visited = set()
-    way = util.Stack()
-    toSee = util.Stack()
+    fringe = util.Stack()
     currentState = problem.getStartState()
+    fringe.push((currentState, []))
+    visited = set()
 
-    while not problem.isGoalState(currentState):
-        visited.add(currentState)
+    while not fringe.isEmpty():
+        currentState, path = fringe.pop()
 
-        succs = [m for m in problem.getSuccessors(currentState) if not m[0] in visited]
-        # for moving randomly between successors
-        random.shuffle(succs)
+        if problem.isGoalState(currentState):
+            return path
 
-        if len(succs) == 0:
-            currentState = backTrack.pop()
-            way.pop()
+        if currentState in visited:
             continue
 
-        for succ in succs:
-            if succ[0] in visited:
-                continue
+        for succ in problem.getSuccessors(currentState):
+            if not succ[0] in visited:
+                fringe.push((succ[0], path + [succ[1]]))
 
-            toSee.push(succ)
+        visited.add(currentState)
 
-        backTrack.push(currentState)
-        nextMove = toSee.pop()
-        currentState = nextMove[0]
-        way.push(getDirection(nextMove[1]))
-
-    return way.list
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
