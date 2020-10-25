@@ -111,54 +111,27 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    from game import Directions
-    n, s, w, e = Directions.NORTH, Directions.SOUTH, Directions.WEST, Directions.EAST
-
-    def getDirection(d):
-        if d == "West":
-            return w
-        elif d == "East":
-            return e
-        elif d == "North":
-            return n
-        elif d == "South":
-            return s
-
-        else:
-            return d
-
-    def findPath(parents, problem):
-        way = []
-        goalState = [m for m in parents.keys() if problem.isGoalState(m)][0]
-        currentState = goalState
-        while currentState != problem.getStartState():
-            way.append(getDirection(parents[currentState][1]))
-            currentState = parents[currentState][0]
-
-        way.reverse()
-        return way
-
-
-    parents = dict()
+    fringe = util.Queue()
     visited = set()
-    toSee = util.Queue()
-    toSee.push(problem.getStartState())
+    currentState = problem.getStartState()
+    fringe.push((currentState, []))
 
-    while len([m for m in toSee.list if problem.isGoalState(m)]) == 0:
-        num = len(toSee.list)
-        for i in range(num):
-            state = toSee.pop()
-            if not state in visited:
-                succs = problem.getSuccessors(state)
-                for succ in succs:
-                    if not succ[0] in visited:
-                        toSee.push(succ[0])
-                        parents[succ[0]] = (state, succ[1])
+    while not fringe.isEmpty():
+        currentState, path = fringe.pop()
 
-                visited.add(state)
+        if problem.isGoalState(currentState):
+            return path
 
-    return findPath(parents, problem)
+        if currentState in visited:
+            continue
 
+        for succ in problem.getSuccessors(currentState):
+            if not succ[0] in visited:
+                fringe.push((succ[0], path + [succ[1]]))
+
+        visited.add(currentState)
+
+    return []
 
 
 def uniformCostSearch(problem):
