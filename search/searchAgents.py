@@ -496,12 +496,12 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    md = util.manhattanDistance
+    md = mazeDistance
     dists = {}
     for i in range(foodGrid.width):
         for j in range(foodGrid.height):
             if foodGrid[i][j]:
-                dists[(i, j)] = md(position, (i, j))
+                dists[(i, j)] = md(position, (i, j), problem.startingGameState)
 
     distances = list(dists.values())
     if len(distances) == 0:
