@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -74,7 +74,37 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        pos = currentGameState.getPacmanPosition()
+        food = currentGameState.getFood()
+        ghostStates = currentGameState.getGhostStates()
+        scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
+
+
+        import math
+        newGhostPositions = [g.getPosition() for g in newGhostStates]
+        newFoodPositions = [(i, j) for i in range(newFood.width) for j in range(newFood.height) if newFood[i][j]]
+
+        if not newFoodPositions:
+            return math.inf
+
+        ghostPositions = [g.getPosition() for g in ghostStates]
+        foodPositions = [(i, j) for i in range(food.width) for j in range(food.height) if food[i][j]]
+
+        md = util.manhattanDistance;
+        GDists = [md(newPos, g) for g in newGhostPositions]
+        FDists = [md(newPos, f) for f in newFoodPositions]
+        minG = min(GDists)
+        minF = min(FDists)
+
+
+        if minG == 0 or minG == 1:
+            return -math.inf
+
+        if len(foodPositions) > len(newFoodPositions):
+            return math.inf
+
+        return -minF
+
 
 def scoreEvaluationFunction(currentGameState):
     """
