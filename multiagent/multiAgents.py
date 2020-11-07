@@ -165,7 +165,75 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        class Node:
+
+            def __init__(self, state, agentIndex, depth, action=None):
+                self.state = state
+                self.agentIndex = agentIndex
+                self.depth = depth
+                self.children = []
+                if self.depth > 0 :#and (not self.isWin()) and (not self.isLose()):
+                    self.getChildren()
+                self.action = action
+
+            def getNumAgents(self):
+                return self.state.getNumAgents()
+
+            def generateSuccessor(self, action):
+                return self.state.generateSuccessor(self.agentIndex, action)
+
+            def getLegalActions(self):
+                return self.state.getLegalActions(self.agentIndex)
+
+            def isMax(self):
+                if not self.agentIndex:
+                    return True
+                return False
+
+            def isLose(self):
+                return self.state.isLose()
+
+            def isWin(self):
+                return self.state.isWin()
+
+            def getChildren(self):
+                for action in self.getLegalActions():
+                    successorState = self.generateSuccessor(action)
+                    agentIndex = (self.agentIndex + 1) % self.getNumAgents()
+                    d = self.depth if agentIndex != 0 else self.depth - 1
+                    self.children.append(Node(successorState, agentIndex, d, action))
+
+
+        def minimax(node, depth, eFunction):
+            import math
+            if not node.children:
+                return eFunction(node.state), node.action
+
+
+            if node.isMax():
+                value = -math.inf
+                for child in node.children:
+                    mm = minimax(child, depth - 1, eFunction)
+                    if value <= mm[0]:
+                        value = mm[0]
+                        action = child.action
+
+            else:
+                value = math.inf
+                for child in node.children:
+                    mm = minimax(child, depth - 1, eFunction)
+                    if value >= mm[0]:
+                        value = mm[0]
+                        action = child.action
+
+            return (value, action)
+
+        root = Node(gameState, 0, self.depth)
+        action = minimax(root, self.depth, self.evaluationFunction)[1]
+
+        return action
+
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -181,7 +249,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
-      Your expectimax agent (question 4)
+    Your expectimax agent (question 4)
     """
 
     def getAction(self, gameState):
