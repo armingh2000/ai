@@ -172,7 +172,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 self.agentIndex = agentIndex
                 self.depth = depth
                 self.children = []
-                if self.depth > 0 :#and (not self.isWin()) and (not self.isLose()):
+                if self.depth > 0:
                     self.getChildren()
                 self.action = action
 
@@ -245,7 +245,80 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        class Node:
+
+            def __init__(self, state, agentIndex, depth, evaluationFunction, alpha, beta, action=None):
+                self.state = state
+                self.agentIndex = agentIndex
+                self.depth = depth
+                self.children = []
+                self.eF = evaluationFunction
+                self.action = action
+                self.alpha = alpha
+                self.beta = beta
+
+            def getNumAgents(self):
+                return self.state.getNumAgents()
+
+            def generateSuccessor(self, action):
+                return self.state.generateSuccessor(self.agentIndex, action)
+
+            def getLegalActions(self):
+                return self.state.getLegalActions(self.agentIndex)
+
+            def isMax(self):
+                if not self.agentIndex:
+                    return True
+                return False
+
+            def isLose(self):
+                return self.state.isLose()
+
+            def isWin(self):
+                return self.state.isWin()
+
+            def alphaBetaPrune(self):
+                import math
+                if self.depth == 0 or self.isLose() or self.isWin():
+                    return self.eF(self.state), self.action
+
+                if self.isMax():
+                    value = -math.inf
+                    for action in self.getLegalActions():
+                        agentIndex = (self.agentIndex + 1) % self.getNumAgents()
+                        d = self.depth if agentIndex != 0 else self.depth - 1
+                        succ = self.generateSuccessor(action)
+                        child = Node(succ, agentIndex, d, self.eF, self.alpha, self.beta, action)
+                        abp = child.alphaBetaPrune()
+                        if value < abp[0]:
+                            value = abp[0]
+                            childAction = child.action
+                            self.alpha = max(self.alpha, value)
+                        if self.alpha > self.beta:
+                            break;
+
+                else:
+                    value = math.inf
+                    for action in self.getLegalActions():
+                        agentIndex = (self.agentIndex + 1) % self.getNumAgents()
+                        d = self.depth if agentIndex != 0 else self.depth - 1
+                        succ = self.generateSuccessor(action)
+                        child = Node(succ, agentIndex, d, self.eF, self.alpha, self.beta, action)
+                        abp = child.alphaBetaPrune()
+                        if value > abp[0]:
+                            value = abp[0]
+                            childAction = child.action
+                            self.beta= min(self.beta, value)
+                        if self.alpha > self.beta:
+                            break;
+
+
+                return value, childAction
+
+        import math
+        root = Node(gameState, 0, self.depth, self.evaluationFunction, -math.inf, math.inf)
+        return root.alphaBetaPrune()[1]
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
