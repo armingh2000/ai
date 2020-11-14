@@ -381,7 +381,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 value = -math.inf
                 for child in node.children:
                     childValue = expectimax(child, eF)[0]
-                    if value < childValue:
+                    if value <= childValue:
                         value = childValue
                         action = child.action
 
@@ -407,7 +407,33 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    ghostStates = currentGameState.getGhostStates()
+    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
+
+
+    ghostPositions = [g.getPosition() for g in ghostStates]
+    foodPositions = [(i, j) for i in range(food.width) for j in range(food.height) if food[i][j]]
+
+    md = util.manhattanDistance;
+    GDists = [md(pos, g) for g in ghostPositions]
+    FDists = [md(pos, f) for f in foodPositions]
+
+    import math
+    minG = min(GDists) if GDists else 0.5
+    minF = min(FDists) if FDists else math.inf
+    maxF = max(FDists) if FDists else math.inf
+    minS = min(scaredTimes) if FDists else 0
+
+    if minS > minG:
+        return 1/minG
+
+    if minG <= 1:
+        return -math.inf
+
+    return -100*len(FDists) + 100/minF + minG
+
 
 # Abbreviation
 better = betterEvaluationFunction
