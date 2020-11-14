@@ -206,7 +206,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         def minimax(node, depth, eFunction):
             import math
-            if not node.children:
+            if not node.children or node.isWin() or node.isLose():
                 return eFunction(node.state), node.action
 
 
@@ -333,7 +333,45 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        class Node:
+
+            def __init__(self, state, agentIndex, depth, action=None):
+                self.state = state
+                self.agentIndex = agentIndex
+                self.depth = depth
+                self.children = []
+                if self.depth > 0:
+                    self.getChildren()
+                self.action = action
+
+            def getNumAgents(self):
+                return self.state.getNumAgents()
+
+            def generateSuccessor(self, action):
+                return self.state.generateSuccessor(self.agentIndex, action)
+
+            def getLegalActions(self):
+                return self.state.getLegalActions(self.agentIndex)
+
+            def isMax(self):
+                if not self.agentIndex:
+                    return True
+                return False
+
+            def isLose(self):
+                return self.state.isLose()
+
+            def isWin(self):
+                return self.state.isWin()
+
+            def getChildren(self):
+                for action in self.getLegalActions():
+                    successorState = self.generateSuccessor(action)
+                    agentIndex = (self.agentIndex + 1) % self.getNumAgents()
+                    d = self.depth if agentIndex != 0 else self.depth - 1
+                    self.children.append(Node(successorState, agentIndex, d, action))
+
+
 
 def betterEvaluationFunction(currentGameState):
     """
