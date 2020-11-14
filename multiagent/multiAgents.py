@@ -372,6 +372,32 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                     self.children.append(Node(successorState, agentIndex, d, action))
 
 
+        def expectimax(node, eF):
+            if not node.children or node.isWin() or node.isLose():
+                return eF(node.state), node.action
+
+            import math
+            if node.isMax():
+                value = -math.inf
+                for child in node.children:
+                    childValue = expectimax(child, eF)[0]
+                    if value < childValue:
+                        value = childValue
+                        action = child.action
+
+            else:
+                value = 0
+                for child in node.children:
+                    value += (1/len(node.children)) * expectimax(child, eF)[0]
+                    action = child.action
+
+            return value, action
+
+        root = Node(gameState, 0, self.depth)
+        res = expectimax(root, self.evaluationFunction)
+        return res[1]
+
+
 
 def betterEvaluationFunction(currentGameState):
     """
