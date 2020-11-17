@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -18,7 +18,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -62,6 +62,31 @@ class ValueIterationAgent(ValueEstimationAgent):
     def runValueIteration(self):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
+        import math
+        for i in range(self.iterations):
+            newValues = util.Counter()
+            for state in self.mdp.getStates():
+                currentValue = -math.inf
+                currentAction = None
+                for action in self.mdp.getPossibleActions(state):
+                    transitionsAndProbs = self.mdp.getTransitionStatesAndProbs(state, action)
+                    tempValue = sum([m[1] * (
+                        self.mdp.getReward(state, action, m[0])
+                        +
+                        self.discount * self.values[m[0]]
+                    )   for m in transitionsAndProbs])
+
+                    if tempValue > currentValue:
+                        currentValue = tempValue
+                        currentAction = action
+
+                if currentAction != None:
+                    newValues[state] = round(currentValue, 2)
+                else:
+                    newValues[state] = 0
+            self.values = newValues
+
+        print(self.values)
 
 
     def getValue(self, state):
