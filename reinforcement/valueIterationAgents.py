@@ -80,13 +80,11 @@ class ValueIterationAgent(ValueEstimationAgent):
                         currentValue = tempValue
                         currentAction = action
 
-                if currentAction != None:
-                    newValues[state] = round(currentValue, 2)
+                if not self.mdp.isTerminal(state):
+                    newValues[state] = currentValue
                 else:
                     newValues[state] = 0
             self.values = newValues
-
-        print(self.values)
 
 
     def getValue(self, state):
@@ -102,7 +100,11 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return sum([m[1] * (
+            self.mdp.getReward(state, action, m[0])
+            +
+            self.discount * self.values[m[0]]
+        ) for m in self.mdp.getTransitionStatesAndProbs(state, action)])
 
     def computeActionFromValues(self, state):
         """
@@ -114,7 +116,21 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        import math
+
+        currentValue = -math.inf
+        currentAction = None
+        for action in self.mdp.getPossibleActions(state):
+            transitionsAndProbs = self.mdp.getTransitionStatesAndProbs(state, action)
+
+            tempValue = sum([m[1] * (self.mdp.getReward(state, action, m[0]) + self.discount * self.values[m[0]])
+                                for m in transitionsAndProbs])
+
+            if tempValue > currentValue:
+                currentValue = tempValue
+                currentAction = action
+
+        return currentAction
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
