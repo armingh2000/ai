@@ -214,4 +214,62 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+        import math
+
+        predecessors = dict()
+        pq = util.PriorityQueue()
+
+        for state in self.mdp.getStates():
+            if not self.mdp.isTerminal(state):
+                for action in self.mdp.getPossibleActions(state):
+                    states = self.mdp.getTransitionStatesAndProbs(state, action)
+
+                    for transition in states:
+                        neighbourState = transition[0]
+                        predecessors.setdefault(neighbourState, set())
+                        predecessors[neighbourState].add(state)
+
+        for s in self.mdp.getStates():
+            if not self.mdp.isTerminal(s):
+                HQValue = -math.inf
+
+                for action in self.mdp.getPossibleActions(s):
+                    temp = self.computeQValueFromValues(s, action)
+                    HQValue = max(HQValue, temp)
+
+                diff = abs(self.values[s] - HQValue)
+
+                pq.update(s, -diff)
+
+        for i in range(self.iterations):
+            if pq.isEmpty():
+                break
+
+            s = pq.pop()
+
+            if not self.mdp.isTerminal(s):
+                HQValue = -math.inf
+
+                for action in self.mdp.getPossibleActions(s):
+                    temp = self.computeQValueFromValues(s, action)
+                    HQValue = max(HQValue, temp)
+
+                self.values[s] = HQValue
+
+            for p in predecessors[s]:
+                if not self.mdp.isTerminal(p):
+                    HQValue = -math.inf
+
+                    for action in self.mdp.getPossibleActions(p):
+                        temp = self.computeQValueFromValues(p, action)
+                        HQValue = max(HQValue, temp)
+
+                    diff = abs(self.values[p] - HQValue)
+
+                    if diff > self.theta:
+                        pq.update(p, -diff)
+
+
+
+
 
