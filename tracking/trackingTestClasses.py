@@ -1,39 +1,15 @@
-# tracking_fa14TestClasses.py
-# ---------------------------
-# Licensing Information:  You are free to use or extend these projects for
-# educational purposes provided that (1) you do not distribute or publish
-# solutions, (2) you retain this notice, and (3) you provide clear
-# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero
-# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and
-# Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
-
-# tracking_fa14TestClasses.py
-# ---------------------------
-# Licensing Information:  You are free to use or extend these projects for
-# educational purposes provided that (1) you do not distribute or publish
-# solutions, (2) you retain this notice, and (3) you provide clear
-# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero
-# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and
-# Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
-
 # trackingTestClasses.py
-# ----------------------
-# Licensing Information: Please do not distribute or publish solutions to this
-# project. You are free to use and extend these projects for educational
-# purposes. The Pacman AI projects were developed at UC Berkeley, primarily by
-# John DeNero (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and Pieter
-# Abbeel in Spring 2013.
+# ---------------------------
+# Licensing Information:  You are free to use or extend these projects for
+# educational purposes provided that (1) you do not distribute or publish
+# solutions, (2) you retain this notice, and (3) you provide clear
+# attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
+#
+# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
+# The core projects and autograders were primarily created by John DeNero
+# (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
+# Student side autograding was added by Brad Miller, Nick Hay, and
+# Pieter Abbeel (pabbeel@cs.berkeley.edu).
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
 
 import testClasses
@@ -236,7 +212,7 @@ class OutputTest(testClasses.TestCase):
         result = self.evalCode(moduleDict)
         result = list(map(lambda x: str(x), result))
         result = ' '.join(result)
-        
+
         if result == solutionDict['result']:
             grades.addMessage('PASS: %s' % self.path)
             grades.addMessage('\t%s' % self.success)
@@ -257,7 +233,7 @@ class OutputTest(testClasses.TestCase):
         solution = list(map(lambda x: str(x), solution))
         handle.write('result: "%s"\n' % ' '.join(solution))
         handle.close()
-        return True        
+        return True
 
     def createPublicVersion(self):
         pass
@@ -471,7 +447,7 @@ class DoubleInferenceAgent(bustersAgents.BustersAgent):
             self.errors += 1
         # check for uniform distribution if necessary
         if self.checkUniform:
-            if abs(max(dist.values()) - max(refDist.values())) > .0025:
+            if abs(max(dist.values()) - max(refDist.values())) > .008:
                 if self.errors == 0:
                     self.grades.fail('%s) Distributions do not have the same max value and are therefore not uniform.\n\tstudent max: %f\n\treference max: %f' % (self.grades.currentQuestion, max(dist.values()), max(refDist.values())))
                     self.errors += 1
