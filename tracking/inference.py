@@ -184,7 +184,6 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
-        print(noisyDistance, pacmanPosition, ghostPosition, jailPosition)
         if noisyDistance == None:
             if ghostPosition == jailPosition:
                 return 1
@@ -300,7 +299,10 @@ class ExactInference(InferenceModule):
         position is known.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+
+        for pos in self.allPositions:
+            self.beliefs[pos] *= self.getObservationProb(observation, gameState.getPacmanPosition(), pos, self.getJailPosition())
+
 
         self.beliefs.normalize()
 
